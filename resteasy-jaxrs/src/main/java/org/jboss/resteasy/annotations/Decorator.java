@@ -1,6 +1,6 @@
 package org.jboss.resteasy.annotations;
 
-import org.jboss.resteasy.spi.interception.DecoratorProcessor;
+import org.jboss.resteasy.spi.DecoratorProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

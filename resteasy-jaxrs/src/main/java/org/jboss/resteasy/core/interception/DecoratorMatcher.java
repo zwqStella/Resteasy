@@ -3,7 +3,7 @@ package org.jboss.resteasy.core.interception;
 import org.jboss.resteasy.annotations.DecorateTypes;
 import org.jboss.resteasy.annotations.Decorator;
 import org.jboss.resteasy.core.MediaTypeMap;
-import org.jboss.resteasy.spi.interception.DecoratorProcessor;
+import org.jboss.resteasy.spi.DecoratorProcessor;
 
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;

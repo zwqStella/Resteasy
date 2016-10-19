@@ -3,7 +3,6 @@ package org.jboss.resteasy.spi.metadata;
 import org.jboss.resteasy.annotations.Body;
 import org.jboss.resteasy.annotations.Form;
 import org.jboss.resteasy.annotations.Query;
-import org.jboss.resteasy.annotations.Suspend;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
 import org.jboss.resteasy.util.IsHttpMethod;
@@ -255,7 +254,7 @@ public class ResourceBuilder
          CookieParam cookie;
          FormParam formParam;
          Form form;
-         Suspend suspend;
+         Annotation suspend;
          Suspended suspended;
 
 
@@ -303,10 +302,14 @@ public class ResourceBuilder
             parameter.paramType = Parameter.ParamType.MATRIX_PARAM;
             parameter.paramName = matrix.value();
          }
-         else if ((suspend = findAnnotation(annotations, Suspend.class)) != null)
+         else if ((suspend = findAnnotation(annotations, "org.jboss.resteasy.annotations.deprecated.Suspend")) != null)
          {
             parameter.paramType = Parameter.ParamType.SUSPEND;
-            parameter.suspendTimeout = suspend.value();
+            try {
+            	parameter.suspendTimeout = (long)suspend.annotationType().getMethod("value").invoke(suspend);
+            } catch (Exception e) {
+            	throw new RuntimeException(e);
+            }
          }
          else if (findAnnotation(annotations, Context.class) != null)
          {

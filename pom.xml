@@ -135,6 +135,7 @@
                 <module>tjws</module>
                 <module>resteasy-test-data</module>
                 <module>resteasy-jaxrs</module>
+                <module>resteasy-legacy</module>
                 <module>resteasy-client</module>
                 <module>providers</module>
                 <module>resteasy-bom</module>

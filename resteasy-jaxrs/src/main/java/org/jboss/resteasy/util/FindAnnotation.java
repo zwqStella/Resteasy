@@ -60,6 +60,19 @@ public final class FindAnnotation
       }
       return null;
    }
+   
+   public static <T> T findAnnotation(Annotation[] searchList, String annotation)
+   {
+      if (searchList == null) return null;
+      for (Annotation ann : searchList)
+      {
+         if (ann.annotationType().getName().equals(annotation))
+         {
+            return (T) ann;
+         }
+      }
+      return null;
+   }
 
 
    public static Class<? extends Annotation>[] findJaxRSAnnotations(Annotation[] searchList)

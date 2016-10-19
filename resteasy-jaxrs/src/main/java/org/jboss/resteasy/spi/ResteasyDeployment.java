@@ -15,12 +15,10 @@ import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.util.GetRestful;
 
-import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configurable;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
@@ -192,32 +190,6 @@ public class ResteasyDeployment
 
             }
          }
-
-         // Interceptor preferences should come before provider registration or builtin.
-
-         if (interceptorPrecedences != null)
-         {
-            for (String precedence : interceptorPrecedences)
-            {
-               providerFactory.appendInterceptorPrecedence(precedence.trim());
-            }
-         }
-
-         if (interceptorBeforePrecedences != null)
-         {
-            for (Map.Entry<String, String> ext : interceptorBeforePrecedences.entrySet())
-            {
-               providerFactory.insertInterceptorPrecedenceBefore(ext.getKey().trim(), ext.getValue().trim());
-            }
-         }
-         if (interceptorAfterPrecedences != null)
-         {
-            for (Map.Entry<String, String> ext : interceptorAfterPrecedences.entrySet())
-            {
-               providerFactory.insertInterceptorPrecedenceAfter(ext.getKey().trim(), ext.getValue().trim());
-            }
-         }
-
 
          if (securityEnabled)
          {
