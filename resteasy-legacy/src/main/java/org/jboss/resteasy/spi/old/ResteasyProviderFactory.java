@@ -27,7 +27,9 @@ import org.jboss.resteasy.core.interception.ContainerResponseFilterRegistry;
 import org.jboss.resteasy.core.interception.JaxrsInterceptorRegistry;
 import org.jboss.resteasy.core.interception.ReaderInterceptorRegistry;
 import org.jboss.resteasy.core.interception.WriterInterceptorRegistry;
+import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.spi.LinkHeader;
 import org.jboss.resteasy.spi.interception.ClientExecutionInterceptor;
 import org.jboss.resteasy.spi.interception.MessageBodyReaderInterceptor;
 import org.jboss.resteasy.spi.interception.MessageBodyWriterInterceptor;
@@ -79,6 +81,7 @@ public class ResteasyProviderFactory extends org.jboss.resteasy.spi.ResteasyProv
    protected void initialize()
    {
       super.initialize();
+      addHeaderDelegate(LinkHeader.class, new LinkHeaderDelegate());
       clientExceptionMappers = new ConcurrentHashMap<Class<?>, ClientExceptionMapper>();
       clientExecutionInterceptorRegistry = new InterceptorRegistry<ClientExecutionInterceptor>(ClientExecutionInterceptor.class, this);
       clientErrorInterceptors = new CopyOnWriteArrayList<ClientErrorInterceptor>();

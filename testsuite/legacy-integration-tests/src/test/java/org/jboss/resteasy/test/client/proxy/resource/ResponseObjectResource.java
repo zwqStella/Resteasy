@@ -1,6 +1,6 @@
 package org.jboss.resteasy.test.client.proxy.resource;
 
-import org.jboss.resteasy.client.Link;
+import org.jboss.resteasy.spi.Link;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

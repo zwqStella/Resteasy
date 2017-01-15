@@ -1,18 +1,18 @@
 package org.jboss.resteasy.spi;
 
-import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
-import org.jboss.resteasy.specimpl.LinkBuilderImpl;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.Link;
+
+import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
+import org.jboss.resteasy.spi.Link;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
+@Deprecated
 public class LinkHeader
 {
    private Map<String, Link> linksByRelationship = new HashMap<String, Link>();
@@ -27,7 +27,7 @@ public class LinkHeader
 
    public LinkHeader addLink(final String title, final String rel, final String href, final String type)
    {
-      final Link link = new LinkBuilderImpl().uri(href).rel(rel).title(title).type(type).build();
+      final Link link = new Link(title, rel, href, type, null);
       return addLink(link);
    }
 
@@ -70,7 +70,7 @@ public class LinkHeader
    {
       return links;
    }
-
+   
    public static LinkHeader valueOf(String val)
    {
       return LinkHeaderDelegate.from(val);
@@ -78,6 +78,12 @@ public class LinkHeader
 
    public String toString()
    {
-      return LinkHeaderDelegate.getString(this);
+      StringBuffer buf = new StringBuffer();
+      for (Link link : getLinks())
+      {
+         if (buf.length() > 0) buf.append(", ");
+         buf.append(link.toString());
+      }
+      return buf.toString();
    }
 }

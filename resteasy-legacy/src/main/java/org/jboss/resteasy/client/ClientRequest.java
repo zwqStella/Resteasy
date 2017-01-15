@@ -1,7 +1,7 @@
 package org.jboss.resteasy.client;
 
-import org.jboss.resteasy.client.Link;
-import org.jboss.resteasy.client.LinkHeader;
+import org.jboss.resteasy.spi.Link;
+import org.jboss.resteasy.spi.LinkHeader;
 import org.jboss.resteasy.client.core.BaseClientResponse;
 import org.jboss.resteasy.client.core.ClientInterceptorRepositoryImpl;
 import org.jboss.resteasy.core.interception.ClientExecutionContextImpl;
@@ -20,9 +20,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Providers;
-import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

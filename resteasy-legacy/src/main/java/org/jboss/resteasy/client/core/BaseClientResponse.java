@@ -3,11 +3,11 @@ package org.jboss.resteasy.client.core;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ClientResponseFailure;
-import org.jboss.resteasy.client.Link;
-import org.jboss.resteasy.client.LinkHeader;
-import org.jboss.resteasy.client.LinkHeaderDelegate;
+import org.jboss.resteasy.spi.Link;
+import org.jboss.resteasy.spi.LinkHeader;
 import org.jboss.resteasy.core.ProvidersContextRetainer;
 import org.jboss.resteasy.core.interception.ClientReaderInterceptorContext;
+import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.spi.MarshalledEntity;
 import org.jboss.resteasy.spi.NotImplementedYetException;
@@ -25,7 +25,6 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Providers;
 import javax.ws.rs.ext.ReaderInterceptor;
 
@@ -42,8 +41,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import static java.lang.String.format;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>

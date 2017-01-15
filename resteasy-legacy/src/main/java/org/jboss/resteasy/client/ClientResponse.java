@@ -1,7 +1,7 @@
 package org.jboss.resteasy.client;
 
-import org.jboss.resteasy.client.Link;
-import org.jboss.resteasy.client.LinkHeader;
+import org.jboss.resteasy.spi.Link;
+import org.jboss.resteasy.spi.LinkHeader;
 import org.jboss.resteasy.util.GenericType;
 
 import javax.ws.rs.core.MultivaluedMap;

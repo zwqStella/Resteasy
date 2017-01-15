@@ -1,8 +1,8 @@
 package org.jboss.resteasy.test.client.resource;
 
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
-import org.jboss.resteasy.spi.LinkHeader;
+import org.jboss.resteasy.plugins.delegates.JAXRSLinkHeaderDelegate;
+import org.jboss.resteasy.spi.JAXRSLinkHeader;
 
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
@@ -19,8 +19,8 @@ public class LinkHeaderService {
 
 
     @POST
-    public Response post(@HeaderParam("Link") LinkHeader linkHeader) {
-        logger.info("SERVER LinkHeader: " + new LinkHeaderDelegate().toString(linkHeader));
+    public Response post(@HeaderParam("Link") JAXRSLinkHeader linkHeader) {
+        logger.info("SERVER LinkHeader: " + new JAXRSLinkHeaderDelegate().toString(linkHeader));
         return Response.noContent().header("Link", linkHeader).build();
     }
 

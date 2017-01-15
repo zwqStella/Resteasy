@@ -1,32 +1,33 @@
-package org.jboss.resteasy.client;
+package org.jboss.resteasy.spi;
+
+import org.jboss.resteasy.plugins.delegates.JAXRSLinkHeaderDelegate;
+import org.jboss.resteasy.specimpl.LinkBuilderImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jboss.resteasy.client.LinkHeaderDelegate;
+import javax.ws.rs.core.Link;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@Deprecated
-public class LinkHeader
+public class JAXRSLinkHeader
 {
    private Map<String, Link> linksByRelationship = new HashMap<String, Link>();
    private Map<String, Link> linksByTitle = new HashMap<String, Link>();
    private List<Link> links = new ArrayList<Link>();
 
-   public LinkHeader addLink(final Link link)
+   public JAXRSLinkHeader addLink(final Link link)
    {
       links.add(link);
       return this;
    }
 
-   public LinkHeader addLink(final String title, final String rel, final String href, final String type)
+   public JAXRSLinkHeader addLink(final String title, final String rel, final String href, final String type)
    {
-      final Link link = new Link(title, rel, href, type, null);
+      final Link link = new LinkBuilderImpl().uri(href).rel(rel).title(title).type(type).build();
       return addLink(link);
    }
 
@@ -69,20 +70,14 @@ public class LinkHeader
    {
       return links;
    }
-   
-   public static LinkHeader valueOf(String val)
+
+   public static JAXRSLinkHeader valueOf(String val)
    {
-      return LinkHeaderDelegate.from(val);
+      return JAXRSLinkHeaderDelegate.from(val);
    }
 
    public String toString()
    {
-      StringBuffer buf = new StringBuffer();
-      for (Link link : getLinks())
-      {
-         if (buf.length() > 0) buf.append(", ");
-         buf.append(link.toString());
-      }
-      return buf.toString();
+      return JAXRSLinkHeaderDelegate.getString(this);
    }
 }

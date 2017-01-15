@@ -1,11 +1,11 @@
-package org.jboss.resteasy.client;
+package org.jboss.resteasy.plugins.delegates;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
-import org.jboss.resteasy.client.Link;
-import org.jboss.resteasy.client.LinkHeader;
+import org.jboss.resteasy.specimpl.LinkBuilderImpl;
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
+import org.jboss.resteasy.spi.JAXRSLinkHeader;
 
-
+import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.RuntimeDelegate;
 
@@ -18,21 +18,20 @@ import java.util.StringTokenizer;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@Deprecated
-public class LinkHeaderDelegate implements RuntimeDelegate.HeaderDelegate<LinkHeader>
+public class JAXRSLinkHeaderDelegate implements RuntimeDelegate.HeaderDelegate<JAXRSLinkHeader>
 {
    private static class Parser
    {
       private int curr;
       private String value;
-      private LinkHeader header = new LinkHeader();
+      private JAXRSLinkHeader header = new JAXRSLinkHeader();
 
       public Parser(String value)
       {
          this.value = value;
       }
 
-      public LinkHeader getHeader()
+      public JAXRSLinkHeader getHeader()
       {
          return header;
       }
@@ -100,7 +99,24 @@ public class LinkHeaderDelegate implements RuntimeDelegate.HeaderDelegate<LinkHe
             while (tokenizer.hasMoreTokens())
             {
                String rel = tokenizer.nextToken();
-               Link link = new Link(title, rel, href, type, attributes);
+               Link.Builder builder = new LinkBuilderImpl().uri(href);
+               if (title != null)
+               {
+                  builder.title(title);
+               }
+               if (rel != null)
+               {
+                  builder.rel(rel);
+               }
+               if (type != null)
+               {
+                  builder.type(type);
+               }
+               for (String key : attributes.keySet())
+               {
+                  builder.param(key, attributes.getFirst(key));
+               }
+               Link link = builder.build();
                header.getLinksByRelationship().put(rel, link);
                header.getLinksByTitle().put(title, link);
                header.getLinks().add(link);
@@ -164,12 +180,12 @@ public class LinkHeaderDelegate implements RuntimeDelegate.HeaderDelegate<LinkHe
 
    }
 
-   public LinkHeader fromString(String value) throws IllegalArgumentException
+   public JAXRSLinkHeader fromString(String value) throws IllegalArgumentException
    {
       return from(value);
    }
 
-   public static LinkHeader from(String value) throws IllegalArgumentException
+   public static JAXRSLinkHeader from(String value) throws IllegalArgumentException
    {
       if (value == null) throw new IllegalArgumentException(Messages.MESSAGES.paramNull());
       Parser parser = new Parser(value);
@@ -178,13 +194,13 @@ public class LinkHeaderDelegate implements RuntimeDelegate.HeaderDelegate<LinkHe
 
    }
 
-   public String toString(LinkHeader value)
+   public String toString(JAXRSLinkHeader value)
    {
       if (value == null) throw new IllegalArgumentException(Messages.MESSAGES.paramNull());
       return getString(value);
    }
 
-   public static String getString(LinkHeader value)
+   public static String getString(JAXRSLinkHeader value)
    {
       StringBuffer buf = new StringBuffer();
       for (Link link : value.getLinks())

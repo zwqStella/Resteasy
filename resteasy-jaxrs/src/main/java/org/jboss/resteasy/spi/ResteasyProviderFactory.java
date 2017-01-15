@@ -13,7 +13,7 @@ import org.jboss.resteasy.plugins.delegates.CookieHeaderDelegate;
 import org.jboss.resteasy.plugins.delegates.DateDelegate;
 import org.jboss.resteasy.plugins.delegates.EntityTagDelegate;
 import org.jboss.resteasy.plugins.delegates.LinkDelegate;
-import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
+import org.jboss.resteasy.plugins.delegates.JAXRSLinkHeaderDelegate;
 import org.jboss.resteasy.plugins.delegates.LocaleDelegate;
 import org.jboss.resteasy.plugins.delegates.MediaTypeHeaderDelegate;
 import org.jboss.resteasy.plugins.delegates.NewCookieHeaderDelegate;
@@ -263,7 +263,7 @@ public class ResteasyProviderFactory extends RuntimeDelegate implements Provider
       addHeaderDelegate(EntityTag.class, new EntityTagDelegate());
       addHeaderDelegate(CacheControl.class, new CacheControlDelegate());
       addHeaderDelegate(Locale.class, new LocaleDelegate());
-      addHeaderDelegate(LinkHeader.class, new LinkHeaderDelegate());
+      addHeaderDelegate(JAXRSLinkHeader.class, new JAXRSLinkHeaderDelegate());
       addHeaderDelegate(javax.ws.rs.core.Link.class, new LinkDelegate());
       addHeaderDelegate(Date.class, new DateDelegate());
    }

@@ -1,6 +1,6 @@
 package org.jboss.resteasy.spi;
 
-import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
+import org.jboss.resteasy.plugins.delegates.JAXRSLinkHeaderDelegate;
 
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MultivaluedMap;
@@ -27,7 +27,7 @@ public class LinkHeaders
       if (values == null) return this;
       for (String val : values)
       {
-         LinkHeader linkHeader = new LinkHeaderDelegate().fromString(val);
+         JAXRSLinkHeader linkHeader = new JAXRSLinkHeaderDelegate().fromString(val);
          for (Link link : linkHeader.getLinks())
          {
             addLink(link);

@@ -7,8 +7,8 @@ import org.jboss.resteasy.client.ClientRequest; //@cs-: clientrequest (Old clien
 import org.jboss.resteasy.client.ClientResponse; //@cs-: clientresponse (Old client test)
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.LinkHeaderDelegate;
-import org.jboss.resteasy.client.LinkHeader;
+import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
+import org.jboss.resteasy.spi.LinkHeader;
 import org.jboss.resteasy.test.client.resource.LinkHeaderService;
 import org.jboss.resteasy.utils.TestUtil;
 import org.jboss.shrinkwrap.api.Archive;

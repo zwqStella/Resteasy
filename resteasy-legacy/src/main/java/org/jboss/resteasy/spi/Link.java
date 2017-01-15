@@ -1,4 +1,4 @@
-package org.jboss.resteasy.client;
+package org.jboss.resteasy.spi;
 
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientRequest;
