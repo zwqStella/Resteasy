@@ -32,7 +32,7 @@ public abstract class Expression implements Comparable<Expression>
       String[] split = PathHelper.URI_PARAM_PATTERN.split(replacedCurlySegment);
       Matcher withPathParam = PathHelper.URI_PARAM_PATTERN.matcher(replacedCurlySegment);
       int i = 0;
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       if (i < split.length) buffer.append(Pattern.quote(split[i++]));
       int groupNumber = 1;
 
@@ -48,8 +48,7 @@ public abstract class Expression implements Comparable<Expression>
          else
          {
             String expr = withPathParam.group(3);
-            expr = PathHelper.recoverEnclosedCurlyBraces(expr);
-            buffer.append(expr);
+            PathHelper.recoverEnclosedCurlyBraces(expr, buffer);
             numNonDefaultGroups++;
             groups.add(new Group(groupNumber++, name));
             groupNumber += groupCount(expr);

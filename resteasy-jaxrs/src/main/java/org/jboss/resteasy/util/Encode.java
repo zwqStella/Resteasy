@@ -155,6 +155,11 @@ public class Encode
       return encodeValue(value, queryStringEncoding);
    }
 
+   public static void encodeQueryString(String value, StringBuilder appendTo)
+   {
+      encodeValue(value, queryStringEncoding, appendTo);
+   }
+
    /**
     * Keep encoded values "%...", matrix parameters, template parameters, and '/' characters intact.
     */
@@ -163,12 +168,22 @@ public class Encode
       return encodeValue(value, pathEncoding);
    }
 
+   public static void encodePath(String value, StringBuilder appendTo)
+   {
+      encodeValue(value, pathEncoding, appendTo);
+   }
+
    /**
     * Keep encoded values "%...", matrix parameters and template parameters intact.
     */
    public static String encodePathSegment(String value)
    {
       return encodeValue(value, pathSegmentEncoding);
+   }
+
+   public static void encodePathSegment(String value, StringBuilder appendTo)
+   {
+      encodeValue(value, pathSegmentEncoding, appendTo);
    }
 
    /**
@@ -187,12 +202,22 @@ public class Encode
       return encodeValue(value, matrixParameterEncoding);
    }
 
+   public static void encodeMatrixParam(String value, StringBuilder appendTo)
+   {
+      encodeValue(value, matrixParameterEncoding, appendTo);
+   }
+
    /**
     * Keep encoded values "%..." and template parameters intact.
     */
    public static String encodeQueryParam(String value)
    {
       return encodeValue(value, queryNameValueEncoding);
+   }
+
+   public static void encodeQueryParam(String value, StringBuilder appendTo)
+   {
+      encodeValue(value, queryNameValueEncoding, appendTo);
    }
 
    //private static final Pattern nonCodes = Pattern.compile("%([^a-fA-F0-9]|$)");
@@ -246,9 +271,15 @@ public class Encode
     */
    public static String encodeNonCodes(String string)
    {
-      Matcher matcher = nonCodes.matcher(string);
-      StringBuilder builder = new StringBuilder();
-
+      StringBuilder sb = stringToMinimalStringBuilder(string);
+      StringBuilder res = new StringBuilder();
+      encodeNonCodes(sb, res);
+      return res.toString();
+   }
+   
+   public static void encodeNonCodes(CharSequence sb, StringBuilder appendTo)
+   {
+      Matcher matcher = nonCodes.matcher(sb);
 
       // FYI: we do not use the no-arg matcher.find()
       //      coupled with matcher.appendReplacement()
@@ -259,24 +290,28 @@ public class Encode
       while (matcher.find(idx))
       {
          int start = matcher.start();
-         builder.append(string.substring(idx, start));
-         builder.append("%25");
+         appendTo.append(sb, idx, start);
+         appendTo.append("%25");
          idx = start + 1;
       }
-      builder.append(string.substring(idx));
-      return builder.toString();
+      appendTo.append(sb, idx, sb.length());
    }
 
-   public static boolean savePathParams(String segment, StringBuilder newSegment, List<String> params)
+   private static StringBuilder savePathParams(String segment, List<String> params)
    {
       boolean foundParam = false;
       // Regular expressions can have '{' and '}' characters.  Replace them to do match
       segment = PathHelper.replaceEnclosedCurlyBraces(segment);
       Matcher matcher = PathHelper.URI_TEMPLATE_PATTERN.matcher(segment);
       int start = 0;
+      StringBuilder newSegment = null;
       while (matcher.find())
       {
-    	 newSegment.append(segment, start, matcher.start());
+         if (newSegment == null)
+         {
+            newSegment = new StringBuilder();
+         }
+         newSegment.append(segment, start, matcher.start());
          foundParam = true;
          String group = matcher.group();
          // Regular expressions can have '{' and '}' characters.  Recover earlier replacement
@@ -284,8 +319,12 @@ public class Encode
          newSegment.append("_resteasy_uri_parameter");
          start = matcher.end();
       }
+      if (!foundParam)
+      {
+         return null;
+      }
       newSegment.append(segment, start, segment.length());
-      return foundParam;
+      return newSegment;
    }
 
    /**
@@ -295,24 +334,27 @@ public class Encode
     * @param encoding
     * @return
     */
-   public static String encodeValue(String segment, String[] encoding)
+   public static String encodeValue(String segment, String[] encoding) {
+      StringBuilder sb = new StringBuilder();
+      encodeValue(segment, encoding, sb);
+      return sb.toString();
+   }
+   
+   private static void encodeValue(String segment, String[] encoding, StringBuilder appendTo)
    {
       ArrayList<String> params = new ArrayList<String>();
-      boolean foundParam = false;
-      StringBuilder newSegment = new StringBuilder();
-      if (savePathParams(segment, newSegment, params))
+      StringBuilder sb = savePathParams(segment, params);
+      if (sb != null)
       {
-         foundParam = true;
-         segment = newSegment.toString();
+         encodeFromArray(sb, encoding, false);
+         StringBuilder tmp = new StringBuilder();
+         encodeNonCodes(sb, tmp);
+         pathParamReplacement(tmp, params, appendTo);
+      } else {
+         sb = stringToMinimalStringBuilder(segment);
+         encodeFromArray(sb, encoding, false);
+         encodeNonCodes(sb, appendTo);
       }
-      String result = encodeFromArray(segment, encoding, false);
-      result = encodeNonCodes(result);
-      segment = result;
-      if (foundParam)
-      {
-         segment = pathParamReplacement(segment, params);
-      }
-      return segment;
    }
 
    /**
@@ -325,9 +367,16 @@ public class Encode
     */
    public static String encodePathAsIs(String segment)
    {
-      return encodeFromArray(segment, pathEncoding, true);
+      StringBuilder sb = new StringBuilder();
+      encodeFromArray(segment, pathEncoding, true, sb);
+      return sb.toString();
    }
-
+   
+   public static void encodePathAsIs(CharSequence segment, StringBuilder appendTo)
+   {
+      encodeFromArray(segment, pathEncoding, true, appendTo);
+   }
+   
    /**
     * Keep any valid encodings from string i.e. keep "%2D" but don't keep "%p"
     *
@@ -336,9 +385,16 @@ public class Encode
     */
    public static String encodePathSaveEncodings(String segment)
    {
-      String result = encodeFromArray(segment, pathEncoding, false);
-      result = encodeNonCodes(result);
-      return result;
+      StringBuilder res = new StringBuilder();
+      encodePathSaveEncodings(segment, res);
+      return res.toString();
+   }
+
+   public static void encodePathSaveEncodings(String segment, StringBuilder appendTo)
+   {
+      StringBuilder sb = stringToMinimalStringBuilder(segment);
+      encodeFromArray(sb, pathEncoding, false);
+      encodeNonCodes(sb, appendTo);
    }
 
    /**
@@ -351,7 +407,14 @@ public class Encode
     */
    public static String encodePathSegmentAsIs(String segment)
    {
-      return encodeFromArray(segment, pathSegmentEncoding, true);
+      StringBuilder sb = new StringBuilder();
+      encodeFromArray(segment, pathSegmentEncoding, true, sb);
+      return sb.toString();
+   }
+
+   public static void encodePathSegmentAsIs(CharSequence segment, StringBuilder appendTo)
+   {
+      encodeFromArray(segment, pathSegmentEncoding, true, appendTo);
    }
 
    /**
@@ -362,11 +425,17 @@ public class Encode
     */
    public static String encodePathSegmentSaveEncodings(String segment)
    {
-      String result = encodeFromArray(segment, pathSegmentEncoding, false);
-      result = encodeNonCodes(result);
-      return result;
+      StringBuilder res = new StringBuilder();
+      encodePathSegmentSaveEncodings(segment, res);
+      return res.toString();
    }
-
+   
+   public static void encodePathSegmentSaveEncodings(String segment, StringBuilder appendTo)
+   {
+      StringBuilder sb = stringToMinimalStringBuilder(segment);
+      encodeFromArray(sb, pathSegmentEncoding, false);
+      encodeNonCodes(sb, appendTo);
+   }
 
    /**
     * Encodes everything of a query parameter name or value.
@@ -376,7 +445,14 @@ public class Encode
     */
    public static String encodeQueryParamAsIs(String nameOrValue)
    {
-      return encodeFromArray(nameOrValue, queryNameValueEncoding, true);
+      StringBuilder sb = new StringBuilder();
+      encodeFromArray(nameOrValue, queryNameValueEncoding, true, sb);
+      return sb.toString();
+   }
+
+   public static void encodeQueryParamAsIs(CharSequence nameOrValue, StringBuilder appendTo)
+   {
+      encodeFromArray(nameOrValue, queryNameValueEncoding, true, appendTo);
    }
 
    /**
@@ -387,38 +463,73 @@ public class Encode
     */
    public static String encodeQueryParamSaveEncodings(String segment)
    {
-      String result = encodeFromArray(segment, queryNameValueEncoding, false);
-      result = encodeNonCodes(result);
-      return result;
+      StringBuilder res = new StringBuilder();
+      encodeQueryParamSaveEncodings(segment, res);
+      return res.toString();
+   }
+
+   public static void encodeQueryParamSaveEncodings(String segment, StringBuilder appendTo)
+   {
+      StringBuilder sb = stringToMinimalStringBuilder(segment);
+      encodeFromArray(sb, queryNameValueEncoding, false);
+      encodeNonCodes(sb, appendTo);
    }
 
    public static String encodeFragmentAsIs(String nameOrValue)
    {
-      return encodeFromArray(nameOrValue, queryNameValueEncoding, true);
+      StringBuilder sb = new StringBuilder();
+      encodeFromArray(nameOrValue, queryNameValueEncoding, true, sb);
+      return sb.toString();
    }
 
-   protected static String encodeFromArray(String segment, String[] encodingMap, boolean encodePercent)
+   protected static void encodeFromArray(CharSequence segment, String[] encodingMap, boolean encodePercent, StringBuilder appendTo)
    {
-      StringBuilder result = new StringBuilder();
-      for (int i = 0; i < segment.length(); i++)
+      final int l = segment.length();
+      for (int i = 0; i < l; i++)
       {
-    	 char currentChar = segment.charAt(i);
+         char currentChar = segment.charAt(i);
          if (!encodePercent && currentChar == '%')
          {
-            result.append(currentChar);
+            appendTo.append(currentChar);
             continue;
          }
          String encoding = encode(currentChar, encodingMap);
          if (encoding == null)
          {
-            result.append(currentChar);
+            appendTo.append(currentChar);
+            continue;
          }
          else
          {
-            result.append(encoding);
+            appendTo.append(encoding);
          }
       }
-      return result.toString();
+   }
+
+   protected static void encodeFromArray(StringBuilder segment, String[] encodingMap, boolean encodePercent)
+   {
+      final int l = segment.length();
+      int j = 0;
+      for (int i = 0; i < l; i++)
+      {
+         char currentChar = segment.charAt(j);
+         if (!encodePercent && currentChar == '%')
+         {
+            j++;
+            continue;
+         }
+         String encoding = encode(currentChar, encodingMap);
+         if (encoding == null)
+         {
+            j++;
+            continue;
+         }
+         else
+         {
+            segment.replace(j, j + 1, encoding);
+            j = j + encoding.length();
+         }
+      }
    }
 
    /**
@@ -447,22 +558,19 @@ public class Encode
       return encoded;
    }
 
-   public static String pathParamReplacement(String segment, List<String> params)
+   public static void pathParamReplacement(StringBuilder segment, List<String> params, StringBuilder appendTo)
    {
-      StringBuilder newSegment = new StringBuilder();
       Matcher matcher = PARAM_REPLACEMENT.matcher(segment);
       int i = 0;
       int start = 0;
       while (matcher.find())
       {
-    	 newSegment.append(segment, start, matcher.start());
+    	 appendTo.append(segment, start, matcher.start());
          String replacement = params.get(i++);
-     	 newSegment.append(replacement);
+         appendTo.append(replacement);
 		 start = matcher.end();
       }
-  	  newSegment.append(segment, start, segment.length());
-      segment = newSegment.toString();
-      return segment;
+      appendTo.append(segment, start, segment.length());
    }
 
    /**
@@ -557,4 +665,10 @@ public class Encode
       }
    }
 
+   private static StringBuilder stringToMinimalStringBuilder(String s)
+   {
+      StringBuilder sb = new StringBuilder(s.length());
+      sb.append(s);
+      return sb;
+   }
 }

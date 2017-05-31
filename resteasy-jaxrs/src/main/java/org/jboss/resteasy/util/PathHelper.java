@@ -71,9 +71,33 @@ public class PathHelper
       return new String(chars);
    }
 
+
    public static String recoverEnclosedCurlyBraces(String str)
    {
-      return str.replace(openCurlyReplacement, '{').replace(closeCurlyReplacement, '}');
-   }
+      StringBuilder sb = new StringBuilder(str.length());
+      recoverEnclosedCurlyBraces(str, sb);
+      return sb.toString();
 
+   }
+   
+   public static void recoverEnclosedCurlyBraces(CharSequence source, StringBuilder dest)
+   {
+      final int l = source.length();
+      for (int i = 0; i < l; i++)
+      {
+         final char c = source.charAt(i);
+         if (c == openCurlyReplacement)
+         {
+            dest.append('{');
+         }
+         else if (c == closeCurlyReplacement)
+         {
+            dest.append('}');
+         }
+         else
+         {
+            dest.append(c);
+         }
+      }
+   }
 }
