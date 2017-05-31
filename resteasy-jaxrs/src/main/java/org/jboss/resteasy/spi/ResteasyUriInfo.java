@@ -47,8 +47,6 @@ public class ResteasyUriInfo implements UriInfo
    private List<String> encodedMatchedUris;
    private List<String> encodedMatchedPaths = new LinkedList<String>();
    private List<Object> ancestors;
-   private String queryString;
-   private String contextPath;
 
 
    public ResteasyUriInfo(String absoluteUri, String queryString, String contextPath)

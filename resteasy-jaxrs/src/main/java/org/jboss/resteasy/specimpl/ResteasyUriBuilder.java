@@ -346,37 +346,34 @@ public class ResteasyUriBuilder extends UriBuilder
       return this;
    }
 
-   protected static String paths(boolean encode, String basePath, String... segments)
+   protected static StringBuilder paths(boolean encode, String basePath, String... segments)
    {
-      String path = basePath;
-      if (path == null) path = "";
+      StringBuilder path = new StringBuilder(basePath == null ? "" : basePath);
       for (String segment : segments)
       {
          if ("".equals(segment)) continue;
-         if (path.endsWith("/"))
+         if (path.length() > 0 && path.charAt(path.length() - 1) == '/')
          {
             if (segment.startsWith("/"))
             {
                segment = segment.substring(1);
                if ("".equals(segment)) continue;
             }
-            if (encode) segment = Encode.encodePath(segment);
-            path += segment;
+            if (encode) Encode.encodePath(segment, path);
+            else path.append(segment);
          }
          else
          {
-            if (encode) segment = Encode.encodePath(segment);
-            if ("".equals(path))
-            {
-               path = segment;
+            if (path.length() != 0 && !segment.startsWith("/")) {
+               path.append("/");
             }
-            else if (segment.startsWith("/"))
+            if (encode)
             {
-               path += segment;
+               Encode.encodePath(segment, path);
             }
             else
             {
-               path += "/" + segment;
+               path.append(segment);
             }
          }
 
@@ -388,7 +385,7 @@ public class ResteasyUriBuilder extends UriBuilder
    public UriBuilder path(String segment) throws IllegalArgumentException
    {
       if (segment == null) throw new IllegalArgumentException(Messages.MESSAGES.pathNull());
-      path = paths(true, path, segment);
+      path = paths(true, path, segment).toString();
       return this;
    }
 
@@ -401,7 +398,7 @@ public class ResteasyUriBuilder extends UriBuilder
       if (ann != null)
       {
          String[] segments = new String[]{ann.value()};
-         path = paths(true, path, segments);
+         path = paths(true, path, segments).toString();
       }
       else
       {
@@ -442,7 +439,7 @@ public class ResteasyUriBuilder extends UriBuilder
       Path ann = method.getAnnotation(Path.class);
       if (ann != null)
       {
-         path = paths(true, path, ann.value());
+         path = paths(true, path, ann.value()).toString();
       }
       else
       {
@@ -614,15 +611,14 @@ public class ResteasyUriBuilder extends UriBuilder
          builder.append(string, start, matcher.start());
          if (!isEncoded)
          {
-            if (encodeSlash) value = Encode.encodePath(value);
-            else value = Encode.encodePathSegment(value);
-
+            if (encodeSlash) Encode.encodePath(value, builder);
+            else Encode.encodePathSegment(value, builder);
          }
          else
          {
-            value = Encode.encodeNonCodes(value);
+            builder.append(Encode.encodeNonCodes(value));
          }
-		 builder.append(value);
+         
 		 start = matcher.end();
       }
       builder.append(string, start, string.length());
@@ -664,16 +660,15 @@ public class ResteasyUriBuilder extends UriBuilder
          {
             if (!fromEncodedMap)
             {
-               if (encodeSlash) stringValue = Encode.encodePathSegmentAsIs(stringValue);
-               else stringValue = Encode.encodePathAsIs(stringValue);
+               if (encodeSlash) Encode.encodePathSegmentAsIs(stringValue, builder);
+               else Encode.encodePathAsIs(stringValue, builder);
             }
             else
             {
-               if (encodeSlash) stringValue = Encode.encodePathSegmentSaveEncodings(stringValue);
-               else stringValue = Encode.encodePathSaveEncodings(stringValue);
+               if (encodeSlash) Encode.encodePathSegmentSaveEncodings(stringValue, builder);
+               else Encode.encodePathSaveEncodings(stringValue, builder);
             }
-			builder.append(stringValue);
-			start = matcher.end();
+            start = matcher.end();
          }
          else
          {
@@ -713,13 +708,12 @@ public class ResteasyUriBuilder extends UriBuilder
          {
             if (!fromEncodedMap)
             {
-            	stringValue = Encode.encodeQueryParamAsIs(stringValue);
+            	Encode.encodeQueryParamAsIs(stringValue, builder);
             }
             else
             {
-            	stringValue = Encode.encodeQueryParamSaveEncodings(stringValue);
+            	Encode.encodeQueryParamSaveEncodings(stringValue, builder);
             }
-			builder.append(stringValue);
 			start = matcher.end();
          }
          else
@@ -756,10 +750,7 @@ public class ResteasyUriBuilder extends UriBuilder
       while (matcher.find())
       {
          String param = matcher.group(1);
-         if (set.contains(param)) continue;
-         else
-         {
-            set.add(param);
+         if (set.add(param)) {
             params.add(param);
          }
       }
@@ -797,11 +788,19 @@ public class ResteasyUriBuilder extends UriBuilder
       if (name == null) throw new IllegalArgumentException(Messages.MESSAGES.nameParameterNull());
       if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParameterNull());
       if (path == null) path = "";
+      StringBuilder sb = null;
       for (Object val : values)
       {
          if (val == null) throw new IllegalArgumentException(Messages.MESSAGES.nullValue());
-         path += ";" + Encode.encodeMatrixParam(name) + "=" + Encode.encodeMatrixParam(val.toString());
+         if (sb == null) {
+            sb = new StringBuilder(path);
+         }
+         sb.append(";");
+         Encode.encodeMatrixParam(name, sb);
+         sb.append("=");
+         Encode.encodeMatrixParam(val.toString(), sb);
       }
+      path = sb.toString();
       return this;
    }
 
@@ -930,9 +929,13 @@ public class ResteasyUriBuilder extends UriBuilder
    {
       if (name == null) throw new IllegalArgumentException(Messages.MESSAGES.nameParameterNull());
       if (value == null) throw new IllegalArgumentException(Messages.MESSAGES.passedInValueNull());
-      if (query == null) query = "";
-      else query += "&";
-      query += Encode.encodeQueryParamAsIs(name) + "=" + Encode.encodeQueryParamAsIs(value.toString());
+      
+      final StringBuilder qsb = new StringBuilder();
+      if (query != null) qsb.append(query).append("&");
+      Encode.encodeQueryParamAsIs(name, qsb);
+      qsb.append("=");
+      Encode.encodeQueryParamAsIs(value.toString(), qsb);
+      query = qsb.toString();
       return this;
    }
 
@@ -941,13 +944,22 @@ public class ResteasyUriBuilder extends UriBuilder
    {
       if (name == null) throw new IllegalArgumentException(Messages.MESSAGES.nameParameterNull());
       if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParameterNull());
+      StringBuilder qsb = null;
       for (Object value : values)
       {
          if (value == null) throw new IllegalArgumentException(Messages.MESSAGES.passedInValueNull());
-         if (query == null) query = "";
-         else query += "&";
-         query += Encode.encodeQueryParam(name) + "=" + Encode.encodeQueryParam(value.toString());
+         if (qsb == null)
+         {
+            qsb = new StringBuilder();
+            if (query != null) qsb.append(query);
+         }
+         if (qsb.length() > 0) qsb.append("&");
+         Encode.encodeQueryParam(name, qsb);
+         qsb.append("=");
+         Encode.encodeQueryParam(value.toString(), qsb);
       }
+      if (qsb != null) query = qsb.toString();
+      else query = "";
       return this;
    }
 
