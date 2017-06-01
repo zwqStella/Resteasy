@@ -95,7 +95,7 @@ public class ResteasyCdiExtension implements Extension
                && GetRestful.isRootResource(annotatedType.getJavaClass())
                && !annotatedType.isAnnotationPresent(Decorator.class))
        {
-           LogMessages.LOGGER.debug(Messages.MESSAGES.discoveredCDIBeanJaxRsResource(annotatedType.getJavaClass().getCanonicalName()));
+           LogMessages.LOGGER.discoveredCDIBeanJaxRsResource(annotatedType.getJavaClass().getCanonicalName());
            event.setAnnotatedType(wrapAnnotatedType(annotatedType, requestScopedLiteral));
            this.resources.add(annotatedType.getJavaClass());
        }
@@ -117,7 +117,7 @@ public class ResteasyCdiExtension implements Extension
                // This check is redundant for CDI 1.1 containers but required for CDI 1.0
                && annotatedType.isAnnotationPresent(Provider.class))
        {
-           LogMessages.LOGGER.debug(Messages.MESSAGES.discoveredCDIBeanJaxRsProvider(annotatedType.getJavaClass().getCanonicalName()));
+           LogMessages.LOGGER.discoveredCDIBeanJaxRsProvider(annotatedType.getJavaClass().getCanonicalName());
            event.setAnnotatedType(wrapAnnotatedType(annotatedType, applicationScopedLiteral));
            this.providers.add(annotatedType.getJavaClass());
        }
@@ -136,7 +136,7 @@ public class ResteasyCdiExtension implements Extension
 
        if(!isSessionBean(annotatedType))
        {
-           LogMessages.LOGGER.debug(Messages.MESSAGES.discoveredCDIBeanApplication(annotatedType.getJavaClass().getCanonicalName()));
+           LogMessages.LOGGER.discoveredCDIBeanApplication(annotatedType.getJavaClass().getCanonicalName());
            event.setAnnotatedType(wrapAnnotatedType(annotatedType, applicationScopedLiteral));
        }
    }
@@ -145,12 +145,12 @@ public class ResteasyCdiExtension implements Extension
    {
       if (Utils.isScopeDefined(type, beanManager))
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.beanHasScopeDefined(type.getJavaClass()));
+         LogMessages.LOGGER.beanHasScopeDefined(type.getJavaClass());
          return type; // leave it as it is
       }
       else
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.beanDoesNotHaveScopeDefined(type.getJavaClass(), scope));
+         LogMessages.LOGGER.beanDoesNotHaveScopeDefined(type.getJavaClass(), scope);
          return new JaxrsAnnotatedType<T>(type, scope);
       }
    }
@@ -163,7 +163,7 @@ public class ResteasyCdiExtension implements Extension
    {
       if (event.getAnnotatedType() == null)
       { // check for resin's bug http://bugs.caucho.com/view.php?id=3967
-         LogMessages.LOGGER.warn(Messages.MESSAGES.annotatedTypeNull());
+         LogMessages.LOGGER.annotatedTypeNull();
          return;
       }
 
@@ -204,12 +204,12 @@ public class ResteasyCdiExtension implements Extension
             if (Utils.isJaxrsAnnotatedClass(clazz))
             {
                sessionBeanInterface.put(bean.getBeanClass(), type);
-               LogMessages.LOGGER.debug(Messages.MESSAGES.typeWillBeUsedForLookup(type, bean.getBeanClass()));
+               LogMessages.LOGGER.typeWillBeUsedForLookup(type, bean.getBeanClass());
                return;
             }
          }
       }
-      LogMessages.LOGGER.debug(Messages.MESSAGES.noLookupInterface(bean.getBeanClass()));
+      LogMessages.LOGGER.noLookupInterface(bean.getBeanClass());
    }
 
    public Map<Class<?>, Type> getSessionBeanInterface()
@@ -224,7 +224,7 @@ public class ResteasyCdiExtension implements Extension
           Class<?> annotationType = annotation.annotationType();
           if (annotationType.getName().equals(JAVAX_EJB_STATELESS) || annotationType.getName().equals(JAVAX_EJB_SINGLETON))
           {
-             LogMessages.LOGGER.debug(Messages.MESSAGES.beanIsSLSBOrSingleton(annotatedType.getJavaClass()));
+             LogMessages.LOGGER.beanIsSLSBOrSingleton(annotatedType.getJavaClass());
              return true; // Do not modify scopes of SLSBs and Singletons
           }
        }

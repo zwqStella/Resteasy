@@ -18,10 +18,4 @@ public interface Messages
 
    @Message(id = BASE + 0, value = "Failed to decode Yaml")
    String failedToDecodeYaml();
-   
-   @Message(id = BASE + 5, value = "Failed to decode Yaml: %s")
-   String failedToDecodeYamlMessage(String message);
-
-   @Message(id = BASE + 10, value = "Failed to encode yaml for object: %s")
-   String failedToEncodeYaml(String object);
 }

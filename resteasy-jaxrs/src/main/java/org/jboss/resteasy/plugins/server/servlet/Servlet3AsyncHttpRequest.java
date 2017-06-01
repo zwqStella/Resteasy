@@ -145,11 +145,11 @@ public class Servlet3AsyncHttpRequest extends HttpServletInputMessage
                      @Override
                      public void run()
                      {
-                        LogMessages.LOGGER.debug(Messages.MESSAGES.scheduledTimeout());
+                        LogMessages.LOGGER.scheduledTimeout();
                         handleTimeout();
                      }
                   };
-                  LogMessages.LOGGER.debug(Messages.MESSAGES.schedulingTimeout());
+                  LogMessages.LOGGER.schedulingTimeout();
                   timeoutFuture = asyncScheduler.schedule(task, time, unit);
                } else {
                   AsyncContext asyncContext = getAsyncContext();
@@ -164,15 +164,15 @@ public class Servlet3AsyncHttpRequest extends HttpServletInputMessage
          @Override
          public boolean cancel()
          {
-            LogMessages.LOGGER.debug(Messages.MESSAGES.cancel());
+            LogMessages.LOGGER.cancel();
             synchronized (responseLock)
             {
                if (cancelled) {
-                  LogMessages.LOGGER.debug(Messages.MESSAGES.alreadyCanceled());
+                  LogMessages.LOGGER.alreadyCanceled();
                   return true;
                }
                if (done) {
-                  LogMessages.LOGGER.debug(Messages.MESSAGES.alreadyDone());
+                  LogMessages.LOGGER.alreadyDone();
                   return false;
                }
                done = true;
@@ -180,7 +180,7 @@ public class Servlet3AsyncHttpRequest extends HttpServletInputMessage
                AsyncContext asyncContext = getAsyncContext();
                try
                {
-                  LogMessages.LOGGER.debug(Messages.MESSAGES.cancellingWith503());
+                  LogMessages.LOGGER.cancellingWith503();
                   return internalResume(Response.status(Response.Status.SERVICE_UNAVAILABLE).build());
                }
                finally
@@ -254,7 +254,7 @@ public class Servlet3AsyncHttpRequest extends HttpServletInputMessage
          @Override
          public void onComplete(AsyncEvent asyncEvent) throws IOException
          {
-            LogMessages.LOGGER.debug(Messages.MESSAGES.onComplete());
+            LogMessages.LOGGER.onComplete();
             synchronized (responseLock)
             {
                done = true;
@@ -264,7 +264,7 @@ public class Servlet3AsyncHttpRequest extends HttpServletInputMessage
          @Override
          public void onTimeout(AsyncEvent asyncEvent) throws IOException
          {
-            LogMessages.LOGGER.debug(Messages.MESSAGES.onTimeout());
+            LogMessages.LOGGER.onTimeout();
             synchronized (responseLock)
             {
                if (done || cancelled) return;

@@ -31,7 +31,6 @@ abstract public class TestMessagesAbstract extends TestMessagesParent
       
       Assert.assertEquals(getExpected(BASE + "00", "impossibleToGenerateWADL", "class", "method"), Messages.MESSAGES.impossibleToGenerateWADL("class", "method"));
       Assert.assertEquals(getExpected(BASE + "15", "overridingConsumesAnnotation"), Messages.MESSAGES.overridingConsumesAnnotation());
-      Assert.assertEquals(getExpected(BASE + "35", "servingPathInfo", "path"), Messages.MESSAGES.servingPathInfo("path"));
    }
    
    @Override

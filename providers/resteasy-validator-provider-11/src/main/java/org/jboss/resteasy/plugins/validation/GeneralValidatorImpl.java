@@ -69,12 +69,12 @@ public class GeneralValidatorImpl implements GeneralValidatorCDI
       try
       {
          cdiActive = ResteasyCdiExtension.isCDIActive();
-         LogMessages.LOGGER.debug(Messages.MESSAGES.resteasyCdiExtensionOnClasspath());
+         LogMessages.LOGGER.resteasyCdiExtensionOnClasspath();
       }
       catch (Throwable t)
       {
          // In case ResteasyCdiExtension is not on the classpath.
-         LogMessages.LOGGER.debug(Messages.MESSAGES.resteasyCdiExtensionNotOnClasspath());
+         LogMessages.LOGGER.resteasyCdiExtensionNotOnClasspath();
       }
       
       ResteasyConfiguration context = ResteasyProviderFactory.getContextData(ResteasyConfiguration.class);

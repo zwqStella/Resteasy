@@ -30,8 +30,6 @@ abstract public class TestMessagesAbstract extends TestMessagesParent
       }
       
       Assert.assertEquals(getExpected(BASE + "00", "failedToDecodeYaml"), Messages.MESSAGES.failedToDecodeYaml());
-      Assert.assertEquals(getExpected(BASE + "05", "failedToDecodeYamlMessage", "abc"), Messages.MESSAGES.failedToDecodeYamlMessage("abc"));
-      Assert.assertEquals(getExpected(BASE + "10", "failedToEncodeYaml", "xyz"), Messages.MESSAGES.failedToEncodeYaml("xyz"));
    }
    
    @Override

@@ -51,11 +51,11 @@ public class AbstractValidatorContextResolver
                   // Also look up java:comp/env
                   Context context = new InitialContext();
                   validatorFactory = tmpValidatorFactory = ValidatorFactory.class.cast(context.lookup("java:comp/ValidatorFactory"));
-                  LogMessages.LOGGER.debug(Messages.MESSAGES.usingValidatorFactorySupportsCDI(validatorFactory));
+                  LogMessages.LOGGER.usingValidatorFactorySupportsCDI(validatorFactory);
                }
                catch (NamingException e)
                {
-                  LogMessages.LOGGER.info(Messages.MESSAGES.usingValidatorFactoryDoesNotSupportCDI());
+                  LogMessages.LOGGER.usingValidatorFactoryDoesNotSupportCDI();
                   HibernateValidatorConfiguration config = Validation.byProvider(HibernateValidator.class).configure();
                   validatorFactory = tmpValidatorFactory = config.buildValidatorFactory();
                }

@@ -171,7 +171,7 @@ public class MediaTypeHeaderDelegate implements RuntimeDelegate.HeaderDelegate
    {
       if (o == null) throw new IllegalArgumentException(Messages.MESSAGES.paramNull());
       MediaType type = (MediaType) o;
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
 
       buf.append(type.getType().toLowerCase()).append("/").append(type.getSubtype().toLowerCase());
       if (type.getParameters() == null || type.getParameters().size() == 0) return buf.toString();

@@ -58,7 +58,7 @@ public class YamlProvider extends AbstractEntityProvider<Object> {
                 return new Yaml(customClassLoaderConstructor).loadAs(entityStream, type);
             }
         } catch (Exception e) {
-            LogMessages.LOGGER.debug(Messages.MESSAGES.failedToDecodeYamlMessage(e.getMessage()));
+            LogMessages.LOGGER.failedToDecodeYamlMessage(e.getMessage());
             throw new ReaderException(Messages.MESSAGES.failedToDecodeYaml(), e);
         }
     }
@@ -103,7 +103,7 @@ public class YamlProvider extends AbstractEntityProvider<Object> {
 
         } catch (Exception e) {
 
-            LogMessages.LOGGER.debug(Messages.MESSAGES.failedToEncodeYaml(t.toString()));
+            LogMessages.LOGGER.failedToEncodeYaml(t.toString());
             throw new WriterException(e);
 
         }

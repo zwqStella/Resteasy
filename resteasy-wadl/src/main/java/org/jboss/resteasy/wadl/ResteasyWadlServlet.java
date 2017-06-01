@@ -28,11 +28,11 @@ public class ResteasyWadlServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        LogMessages.LOGGER.debug(Messages.MESSAGES.loadingResteasyWadlServlet());
+        LogMessages.LOGGER.loadingResteasyWadlServlet();
 
         scanResources();
 
-        LogMessages.LOGGER.debug(Messages.MESSAGES.resteasyWadlServletLoaded());
+        LogMessages.LOGGER.resteasyWadlServletLoaded();
 
         // make it possible to get to us for rescanning
         ServletContext servletContext = config.getServletContext();
@@ -45,8 +45,8 @@ public class ResteasyWadlServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
         String uri = req.getRequestURL().toString();
         uri = uri.substring(0, uri.length() - req.getServletPath().length());
-        LogMessages.LOGGER.debug(Messages.MESSAGES.servingPathInfo(pathInfo));
-        LogMessages.LOGGER.debug(Messages.MESSAGES.query(req.getQueryString()));
+        LogMessages.LOGGER.servingPathInfo(pathInfo);
+        LogMessages.LOGGER.query(req.getQueryString());
         if (this.services == null) scanResources();
         if (this.services == null) {
             resp.sendError(503, Messages.MESSAGES.noResteasyDeployments());
