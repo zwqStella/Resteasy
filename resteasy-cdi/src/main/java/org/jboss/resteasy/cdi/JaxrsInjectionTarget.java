@@ -68,7 +68,7 @@ public class JaxrsInjectionTarget<T> implements InjectionTarget<T>
       }
       else
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.skippingValidationOutsideResteasyContext());
+         LogMessages.LOGGER.skippingValidationOutsideResteasyContext();
       }
    }
 

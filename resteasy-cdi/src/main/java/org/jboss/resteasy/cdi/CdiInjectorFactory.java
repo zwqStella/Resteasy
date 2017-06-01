@@ -72,7 +72,7 @@ public class CdiInjectorFactory implements InjectorFactory
       ConstructorInjector injector = cdiConstructor(clazz);
       if (injector != null) return injector;
 
-      LogMessages.LOGGER.debug(Messages.MESSAGES.noCDIBeansFound(clazz));
+      LogMessages.LOGGER.noCDIBeansFound(clazz);
       return delegate.createConstructor(constructor, providerFactory);
    }
 
@@ -84,7 +84,7 @@ public class CdiInjectorFactory implements InjectorFactory
       ConstructorInjector injector = cdiConstructor(clazz);
       if (injector != null) return injector;
 
-      LogMessages.LOGGER.debug(Messages.MESSAGES.noCDIBeansFound(clazz));
+      LogMessages.LOGGER.noCDIBeansFound(clazz);
       return delegate.createConstructor(constructor, factory);
    }
 
@@ -94,14 +94,14 @@ public class CdiInjectorFactory implements InjectorFactory
    {
       if (!manager.getBeans(clazz).isEmpty())
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.usingCdiConstructorInjector(clazz));
+         LogMessages.LOGGER.usingCdiConstructorInjector(clazz);
          return new CdiConstructorInjector(clazz, manager);
       }
 
       if (sessionBeanInterface.containsKey(clazz))
       {
          Type intfc = sessionBeanInterface.get(clazz);
-         LogMessages.LOGGER.debug(Messages.MESSAGES.usingInterfaceForLookup(intfc, clazz));
+         LogMessages.LOGGER.usingInterfaceForLookup(intfc, clazz);
          return new CdiConstructorInjector(intfc, manager);
       }
 
@@ -137,7 +137,7 @@ public class CdiInjectorFactory implements InjectorFactory
       beanManager = lookupBeanManagerInJndi("java:comp/BeanManager");
       if (beanManager != null)
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.foundBeanManagerAtJavaComp());
+         LogMessages.LOGGER.foundBeanManagerAtJavaComp();
          return beanManager;
       }
 
@@ -145,21 +145,21 @@ public class CdiInjectorFactory implements InjectorFactory
       beanManager = lookupBeanManagerInJndi("java:app/BeanManager");
       if (beanManager != null)
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.foundBeanManagerAtJavaApp());
+         LogMessages.LOGGER.foundBeanManagerAtJavaApp();
          return beanManager;
       }
 
       beanManager = lookupBeanManagerCDIUtil();
       if(beanManager != null)
       {
-          LogMessages.LOGGER.debug(Messages.MESSAGES.foundBeanManagerViaCDI());
+          LogMessages.LOGGER.foundBeanManagerViaCDI();
           return beanManager;
       }
 
       beanManager = lookupBeanManagerViaServletContext();
       if(beanManager != null)
       {
-          LogMessages.LOGGER.debug(Messages.MESSAGES.foundBeanManagerInServletContext());
+          LogMessages.LOGGER.foundBeanManagerInServletContext();
           return beanManager;
       }
 
@@ -171,17 +171,17 @@ public class CdiInjectorFactory implements InjectorFactory
       try
       {
          InitialContext ctx = new InitialContext();
-         LogMessages.LOGGER.debug(Messages.MESSAGES.doingALookupForBeanManager(name));
+         LogMessages.LOGGER.doingALookupForBeanManager(name);
          return (BeanManager) ctx.lookup(name);
       }
       catch (NamingException e)
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.unableToObtainBeanManager(name));
+         LogMessages.LOGGER.unableToObtainBeanManager(name);
          return null;
       }
       catch (NoClassDefFoundError ncdfe)
       {
-         LogMessages.LOGGER.debug(Messages.MESSAGES.unableToPerformJNDILookups());
+         LogMessages.LOGGER.unableToPerformJNDILookups();
          return null;
       }
    }
@@ -199,7 +199,7 @@ public class CdiInjectorFactory implements InjectorFactory
                beanManager = (BeanManager) servletContext.getAttribute(BEAN_MANAGER_ATTRIBUTE_PREFIX + BeanManager.class.getName());
                if (beanManager != null)
                {
-                   LogMessages.LOGGER.debug(Messages.MESSAGES.foundBeanManagerInServletContext());
+                   LogMessages.LOGGER.foundBeanManagerInServletContext();
                    return beanManager;
                }
 
@@ -207,19 +207,19 @@ public class CdiInjectorFactory implements InjectorFactory
                beanManager = (BeanManager) servletContext.getAttribute(BeanManager.class.getName());
                if (beanManager != null)
                {
-                   LogMessages.LOGGER.debug(Messages.MESSAGES.foundBeanManagerInServletContext());
+                   LogMessages.LOGGER.foundBeanManagerInServletContext();
                    return beanManager;
                }
            }
        }
        catch (NoClassDefFoundError e)
        {
-          LogMessages.LOGGER.debug(Messages.MESSAGES.unableToFindServletContextClass(), e);
+          LogMessages.LOGGER.unableToFindServletContextClass(e);
        }
 
        catch (Exception e)
        {
-          LogMessages.LOGGER.debug(Messages.MESSAGES.errorOccurredLookingUpServletContext(), e);
+          LogMessages.LOGGER.errorOccurredLookingUpServletContext(e);
        }
        return beanManager;
    }
@@ -233,11 +233,11 @@ public class CdiInjectorFactory implements InjectorFactory
        }
        catch (NoClassDefFoundError e)
        {
-           LogMessages.LOGGER.debug(Messages.MESSAGES.unableToFindCDIClass(), e);
+           LogMessages.LOGGER.unableToFindCDIClass(e);
        }
        catch (Exception e)
        {
-          LogMessages.LOGGER.debug(Messages.MESSAGES.errorOccurredLookingUpViaCDIUtil(), e);
+          LogMessages.LOGGER.errorOccurredLookingUpViaCDIUtil(e);
        }
        return bm;
    }

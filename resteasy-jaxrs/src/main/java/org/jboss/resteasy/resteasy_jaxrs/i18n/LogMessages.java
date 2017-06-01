@@ -230,6 +230,44 @@ public interface LogMessages extends BasicLogger
    @Message(id = BASE + 335, value = "Unable to retrieve config: enableSecureProcessingFeature defaults to true")
    void unableToRetrieveConfigSecure();
    
+   int BASE_3K = 3000;
+   int BASE_ASYNC_9K = 9500;
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 0, value = "-- already canceled")
+   void alreadyCanceled();
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 5, value = "-- already done")
+   void alreadyDone();
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 15, value = "cancel()")
+   void cancel();
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 20, value = "-- cancelling with 503")
+   void cancellingWith503();
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 25, value = "onComplete")
+   void onComplete();
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 30, value = "onTimeout")
+   void onTimeout();
+
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 40, value = "scheduled timeout")
+   void scheduledTimeout();
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_ASYNC_9K + 45, value = "scheduling timeout")
+   void schedulingTimeout();
+   
+   @LogMessage(level = Level.DEBUG)
+   @Message(id = BASE_3K + 770, value = "Response is committed, can't handle exception")
+   void responseIsCommitted();
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    //                                                  TRACE                                                //

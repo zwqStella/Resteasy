@@ -52,7 +52,7 @@ public class ResteasyWadlWriter {
     private void processWadl(ResteasyWadlServiceRegistry serviceRegistry, Resources root) throws JAXBException {
 
         for (Map.Entry<String, ResteasyWadlResourceMetaData> resourceMetaDataEntry : serviceRegistry.getResources().entrySet()) {
-            LogMessages.LOGGER.debug(Messages.MESSAGES.path(resourceMetaDataEntry.getKey()));
+            LogMessages.LOGGER.path(resourceMetaDataEntry.getKey());
             Resource resourceClass = new Resource();
 
             resourceClass.setPath(resourceMetaDataEntry.getKey());
