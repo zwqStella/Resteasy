@@ -10,7 +10,7 @@ import org.jboss.logging.annotations.MessageBundle;
 public interface Messages
 {
    Messages MESSAGES = org.jboss.logging.Messages.getBundle(Messages.class);
-   int BASE = 9500;
+   int BASE = 8200;
 
    @Message(id = BASE + 00, value = "JSON Binding deserialization error {0}", format=Format.MESSAGE_FORMAT)
    String jsonBDeserializationError(String element);

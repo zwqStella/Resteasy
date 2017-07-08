@@ -9,6 +9,7 @@ import org.jboss.resteasy.test.providers.jsonb.basic.resource.JsonBindingResourc
 import org.jboss.resteasy.utils.PortProviderUtil;
 import org.jboss.resteasy.utils.TestUtil;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -44,6 +45,8 @@ public class JsonBindingTest {
    public static Archive<?> deploy() {
       WebArchive war = TestUtil.prepareArchive(JsonBindingTest.class.getSimpleName());
       war.addClass(JsonBindingTest.class);
+      war.setManifest(new StringAsset("Manifest-Version: 1.0\n"
+            + "Dependencies: org.jboss.resteasy.resteasy-json-binding-provider services\n"));
       return TestUtil.finishContainerPrepare(war, null, JsonBindingResource.class, Cat.class);
    }
 
